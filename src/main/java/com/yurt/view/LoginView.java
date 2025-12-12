@@ -12,87 +12,81 @@ import java.sql.SQLException;
 
 public class LoginView extends BasePage {
 
-    private JTextField txtTcNo;
+    private JTextField txtGirisBilgisi; // Adı değişti (TC/Email/Username olabilir)
     private JPasswordField txtSifre;
     private JButton btnGiris;
 
     public LoginView() {
         super("Yurt Otomasyonu - Giriş", 400, 300);
         initializeComponents();
-        setVisible(true); // Ekranı görünür yap
+        setVisible(true);
     }
 
     @Override
     public void initializeComponents() {
-        // TC Kimlik Label ve Text
-        JLabel lblTc = new JLabel("TC Kimlik No:");
-        lblTc.setBounds(50, 50, 100, 25);
-        add(lblTc);
+        // Label Güncellemesi
+        JLabel lblInfo = new JLabel("TC / Email / Kullanıcı Adı:");
+        lblInfo.setBounds(50, 50, 200, 25);
+        add(lblInfo);
 
-        txtTcNo = new JTextField();
-        txtTcNo.setBounds(150, 50, 150, 25);
-        add(txtTcNo);
+        txtGirisBilgisi = new JTextField();
+        txtGirisBilgisi.setBounds(50, 75, 250, 25);
+        add(txtGirisBilgisi);
 
-        // Şifre Label ve Text
         JLabel lblPass = new JLabel("Şifre:");
-        lblPass.setBounds(50, 100, 100, 25);
+        lblPass.setBounds(50, 110, 100, 25);
         add(lblPass);
 
         txtSifre = new JPasswordField();
-        txtSifre.setBounds(150, 100, 150, 25);
+        txtSifre.setBounds(50, 135, 250, 25);
         add(txtSifre);
 
-        // Giriş Butonu
         btnGiris = new JButton("Giriş Yap");
-        btnGiris.setBounds(150, 150, 100, 30);
+        btnGiris.setBounds(125, 180, 100, 30);
         add(btnGiris);
 
-        // Butona tıklama olayı
         btnGiris.addActionListener(e -> loginIslemi());
     }
 
     private void loginIslemi() {
-        String tc = txtTcNo.getText();
+        String girisBilgisi = txtGirisBilgisi.getText();
         String sifre = new String(txtSifre.getPassword());
 
-        // Veritabanından kontrol et
         try {
             Connection conn = DatabaseConnection.getInstance().getConnection();
-            String sql = "SELECT * FROM users WHERE tc_no = ? AND sifre = ?";
+
+            // ÇOKLU GİRİŞ SORGUSU
+            String sql = "SELECT * FROM users WHERE (tc_no = ? OR email = ? OR kullanici_adi = ?) AND sifre = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, tc);
-            ps.setString(2, sifre);
+            ps.setString(1, girisBilgisi);
+            ps.setString(2, girisBilgisi);
+            ps.setString(3, girisBilgisi);
+            ps.setString(4, sifre);
 
             ResultSet rs = ps.executeQuery();
 
-            // TEK BİR IF BLOĞU KULLANIYORUZ
             if (rs.next()) {
                 String rol = rs.getString("rol");
-
-                // Factory kullanarak nesne üretiyoruz (Factory Deseni)
                 User user = UserFactory.createUser(rol);
 
-                // Veritabanından gelen verileri nesneye dolduruyoruz
                 if (user != null) {
                     user.setId(rs.getInt("id"));
                     user.setTcNo(rs.getString("tc_no"));
                     user.setAd(rs.getString("ad"));
                     user.setSoyad(rs.getString("soyad"));
+                    user.setEmail(rs.getString("email"));
+                    user.setSifre(rs.getString("sifre"));
 
-                    // Giriş ekranını kapat
                     this.dispose();
 
-                    // Role göre ilgili ekranı aç
                     if (rol.equalsIgnoreCase("OGRENCI")) {
-                        new StudentView(user); // Öğrenci panelini aç
+                        new StudentView(user);
                     } else if (rol.equalsIgnoreCase("PERSONEL")) {
-                        new PersonnelView(user); // ARTIK PERSONEL PANELİNİ AÇIYOR
+                        new PersonnelView(user);
                     }
                 }
-
             } else {
-                // Kullanıcı bulunamadıysa
-                JOptionPane.showMessageDialog(this, "Hatalı TC veya Şifre!", "Hata", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Hatalı Giriş Bilgisi veya Şifre!", "Hata", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (SQLException ex) {

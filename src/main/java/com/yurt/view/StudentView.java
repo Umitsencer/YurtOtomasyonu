@@ -2,7 +2,6 @@ package com.yurt.view;
 
 import com.yurt.database.DatabaseConnection;
 import com.yurt.model.User;
-// DateUtils sınıfını import ediyoruz (Tarih kontrolü için)
 import com.yurt.model.DateUtils;
 
 import javax.swing.*;
@@ -49,7 +48,7 @@ public class StudentView extends BasePage {
         lblOdaBilgisi.setFont(new Font("Arial", Font.BOLD, 14));
         pnlTop.add(lblOdaBilgisi);
 
-        // YENİ: Profil Güncelleme Butonu
+        // Profil Güncelleme Butonu
         JButton btnProfil = new JButton("Bilgilerimi Güncelle");
         btnProfil.setBackground(new Color(255, 165, 0)); // Turuncu
         btnProfil.setForeground(Color.WHITE);
@@ -95,7 +94,13 @@ public class StudentView extends BasePage {
         add(lblMates);
 
         String[] colMates = {"Ad", "Soyad", "İletişim"};
-        modelRoommates = new DefaultTableModel(colMates, 0);
+        // Tabloyu KİLİTLE (Editable False)
+        modelRoommates = new DefaultTableModel(colMates, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable tblRoommates = new JTable(modelRoommates);
         JScrollPane scrollMates = new JScrollPane(tblRoommates);
         scrollMates.setBounds(300, 100, 300, 400);
@@ -108,8 +113,18 @@ public class StudentView extends BasePage {
         add(lblGecmis);
 
         String[] colPerms = {"Tarih Aralığı", "Sebep", "Durum"};
-        modelPermissions = new DefaultTableModel(colPerms, 0);
+        // Tabloyu KİLİTLE
+        modelPermissions = new DefaultTableModel(colPerms, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable tblPermissions = new JTable(modelPermissions);
+
+        // SÜTUN GENİŞLİĞİ AYARI (Tarihler tam görünsün diye)
+        tblPermissions.getColumnModel().getColumn(0).setPreferredWidth(160);
+
         JScrollPane scrollPerms = new JScrollPane(tblPermissions);
         scrollPerms.setBounds(650, 100, 300, 400);
         add(scrollPerms);
@@ -167,13 +182,11 @@ public class StudentView extends BasePage {
         try {
             Connection conn = DatabaseConnection.getInstance().getConnection();
 
-            // Users tablosu (Email, Şifre)
             String sqlUser = "UPDATE users SET email = ?, sifre = ? WHERE id = ?";
             PreparedStatement psUser = conn.prepareStatement(sqlUser);
             psUser.setString(1, mail); psUser.setString(2, pass); psUser.setInt(3, currentUser.getId());
             psUser.executeUpdate();
 
-            // Student_details tablosu (Tel, Adres)
             ResultSet rsCheck = conn.createStatement().executeQuery("SELECT * FROM student_details WHERE user_id=" + currentUser.getId());
             if (rsCheck.next()) {
                 String sqlDet = "UPDATE student_details SET telefon = ?, adres = ? WHERE user_id = ?";
@@ -204,7 +217,7 @@ public class StudentView extends BasePage {
             return;
         }
 
-        // --- TARİH KONTROLLERİ ---
+        // DateUtils sınıfını kullanıyoruz
         if (!DateUtils.isValidFormat(baslangic) || !DateUtils.isValidFormat(bitis)) {
             JOptionPane.showMessageDialog(this, "Tarih formatı GG.AA.YYYY olmalı! (Örn: 15.05.2025)", "Format Hatası", JOptionPane.WARNING_MESSAGE);
             return;
@@ -256,7 +269,6 @@ public class StudentView extends BasePage {
                     ((com.yurt.patterns.observer.Observer) currentUser).update("Oda atamanız yapıldı: " + odaNo);
                 }
 
-                // Oda Arkadaşlarını Telefonlarıyla Getir
                 String sqlMates = "SELECT u.ad, u.soyad, sd.telefon FROM users u JOIN student_details sd ON u.id = sd.user_id WHERE sd.oda_id = ? AND u.id != ?";
                 PreparedStatement psMates = conn.prepareStatement(sqlMates);
                 psMates.setInt(1, odaId);
