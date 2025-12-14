@@ -11,7 +11,7 @@ public class StudentBuilder {
     private String email;
     private String telefon;
     private String adres;
-    private String kullaniciAdi; // YENİ
+    private String kullaniciAdi;
 
     public StudentBuilder setAd(String ad) { this.ad = ad; return this; }
     public StudentBuilder setSoyad(String soyad) { this.soyad = soyad; return this; }

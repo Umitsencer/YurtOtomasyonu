@@ -1,4 +1,4 @@
-package com.yurt.patterns;
+package com.yurt.patterns.Factory;
 
 import com.yurt.model.User;
 import com.yurt.model.Student;

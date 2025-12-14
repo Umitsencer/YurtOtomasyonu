@@ -81,7 +81,7 @@ public class DatabaseConnection {
         }
     }
 
-    // --- GÜNCELLENMİŞ ADMIN OLUŞTURMA (TC: 11 HANE, ŞİFRE: 1453) ---
+    // --- ADMIN OLUŞTURMA (TC: 11 HANE, ŞİFRE: 1453) ---
     private void createDefaultAdmin() {
         try {
             Statement stmt = connection.createStatement();
@@ -95,8 +95,6 @@ public class DatabaseConnection {
                 ps.setString(3, "Sistem");
                 ps.setString(4, "Yöneticisi");
                 ps.setString(5, "admin@yurt.com");
-
-                // GÜNCELLEME BURADA: Şifre 1453 yapıldı
                 ps.setString(6, "1453");
 
                 ps.setString(7, "PERSONEL");

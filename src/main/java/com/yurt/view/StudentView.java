@@ -122,7 +122,7 @@ public class StudentView extends BasePage {
         };
         JTable tblPermissions = new JTable(modelPermissions);
 
-        // SÜTUN GENİŞLİĞİ AYARI (Tarihler tam görünsün diye)
+        // SÜTUN GENİŞLİĞİ AYARI
         tblPermissions.getColumnModel().getColumn(0).setPreferredWidth(160);
 
         JScrollPane scrollPerms = new JScrollPane(tblPermissions);

@@ -2,7 +2,7 @@ package com.yurt.view;
 
 import com.yurt.database.DatabaseConnection;
 import com.yurt.model.User;
-import com.yurt.patterns.UserFactory;
+import com.yurt.patterns.Factory.UserFactory;
 
 import javax.swing.*;
 import java.sql.Connection;
