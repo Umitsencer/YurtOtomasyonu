@@ -4,7 +4,7 @@ Bu proje, **Kırklareli Üniversitesi Yazılım Mühendisliği** Bölümü "Yaz�
 
 ## 👨‍💻 Proje Ekibi
 *   **Ad Soyad:** Ümit SENCER 
-*   **Ad Soyad:** Yusuf İslam Sözen
+*   **Ad Soyad:** Yusuf İslam Sözen  https://github.com/search?q=YusufSozen&type=users
 *   **Ad Soyad:** Azo İSMAİL
 
 ---
